@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body style="background:black;color:white;text-align:center">
+
+<h1>Scan & Pay</h1>
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=AnantPay">
+
+<br><br>
+
+<button onclick="pay()">Payment Done</button>
+<button onclick="downloadReceipt()">Download Receipt</button>
+
+<script>
+function pay(){
+const data = JSON.parse(localStorage.getItem("bookingData"));
+
+let bookings = JSON.parse(localStorage.getItem("allBookings")) || [];
+bookings.push(data);
+localStorage.setItem("allBookings", JSON.stringify(bookings));
+
+alert("Booking Confirmed ✅");
+}
+
+function downloadReceipt(){
+const data = JSON.parse(localStorage.getItem("bookingData"));
+
+const text = `
+----- ANANT LUXE RESORT -----
+
+Name: ${data.name}
+Email: ${data.email}
+Phone: ${data.phone}
+
+Room: ${data.room}
+Guests: ${data.guests}
+
+Check-in: ${data.checkin}
+Check-out: ${data.checkout}
+
+Status: PAID ✅
+
+Thank you for choosing us!
+`;
+
+const blob = new Blob([text], {type:"text/plain"});
+const a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = "Anant_Receipt.txt";
+a.click();
+}
+</script>
+
+</body>
+</html>

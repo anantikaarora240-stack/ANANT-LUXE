@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Luxury Hotel Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b0b0b;
+  color:white;
+}
+
+/* TOP BAR */
+.topbar{
+  background:linear-gradient(90deg,#000,#1c1c1c);
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:2px solid gold;
+}
+
+.topbar h2{
+  color:gold;
+}
+
+/* NAV */
+.nav button{
+  margin:0 5px;
+  padding:8px 12px;
+  border:none;
+  cursor:pointer;
+  background:#222;
+  color:white;
+  border-radius:5px;
+}
+
+.nav button:hover{
+  background:gold;
+  color:black;
+}
+
+/* SECTIONS */
+.section{
+  display:none;
+  padding:15px;
+}
+
+.active{
+  display:block;
+}
+
+/* CARDS */
+.card{
+  background:#1c1c1c;
+  padding:10px;
+  margin:10px 0;
+  border-radius:10px;
+  border-left:4px solid gold;
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.box{
+  flex:1;
+  background:#222;
+  padding:10px;
+  text-align:center;
+  border-radius:10px;
+}
+
+button{
+  cursor:pointer;
+}
+
+/* GOLD BUTTON */
+.gold{
+  background:gold;
+  border:none;
+  padding:5px 10px;
+  margin-top:5px;
+}
+.red{
+  background:red;
+  color:white;
+  border:none;
+  padding:5px 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH CHECK -->
+<script>
+if(localStorage.getItem("auth") !== "yes"){
+  window.location.href="login.html";
+}
+</script>
+
+<!-- TOP -->
+<div class="topbar">
+  <h2>🏨 Anant Luxe Admin</h2>
+
+  <div class="nav">
+    <button onclick="show('dash')">Dashboard</button>
+    <button onclick="show('orders')">Orders</button>
+    <button onclick="show('bookings')">Bookings</button>
+    <button onclick="show('walkin')">Walk-in</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash" class="section active">
+
+  <h2>📊 Dashboard</h2>
+
+  <div class="stats">
+    <div class="box">
+      💰 <h3 id="profit">0</h3>
+    </div>
+
+    <div class="box">
+      🍔 <h3 id="orderCount">0</h3>
+    </div>
+
+    <div class="box">
+      🏨 <h3 id="bookingCount">0</h3>
+    </div>
+
+    <div class="box">
+      🧍 <h3 id="walkCount">0</h3>
+    </div>
+  </div>
+
+  <canvas id="chart"></canvas>
+
+</div>
+
+<!-- ORDERS -->
+<div id="orders" class="section">
+
+  <h2>🍔 Orders</h2>
+
+  <div id="orderList"></div>
+
+</div>
+
+<!-- BOOKINGS -->
+<div id="bookings" class="section">
+
+  <h2>🏨 Bookings</h2>
+
+  <div id="bookingList"></div>
+
+</div>
+
+<!-- WALK-IN -->
+<div id="walkin" class="section">
+
+  <h2>🧍 Walk-in Customers</h2>
+
+  <button class="gold" onclick="addWalkin()">➕ Add Walk-in</button>
+
+  <div id="walkList"></div>
+
+</div>
+
+<script>
+
+/* NAV */
+function show(id){
+
+  let sections = document.querySelectorAll('.section');
+
+  sections.forEach(s=>{
+    s.classList.remove('active');
+  });
+
+  let el = document.getElementById(id);
+  if(el) el.classList.add('active');
+
+  // 🔥 LOAD DATA WHEN TAB OPENS
+  if(id === "dash") loadDashboard();
+  if(id === "orders") loadOrders();
+  if(id === "bookings") loadBookings();
+  if(id === "walkin") loadWalkins();
+}
+function getOrders(){
+
+  let raw = localStorage.getItem("orders");
+  let orders = [];
+
+  if(!raw) return [];
+
+  // STRING FORMAT (menu.html)
+  if(raw.includes("|")){
+
+    raw.split("||").forEach(o=>{
+      if(o.trim() !== ""){
+
+        let p = o.split("|");
+
+        orders.push({
+          item: p[0] || "Unknown",
+          qty: Number(p[1] || 1),
+          type: p[2] || "Dining",
+          room: p[3] || "Dining",
+          price: Number(p[4] || 0), // ✅ THIS IS TOTAL
+          time: p[5] || ""
+        });
+      }
+    });
+
+  }else{
+
+    // JSON FORMAT (index.html)
+    try{
+      let data = JSON.parse(raw);
+
+      data.forEach(o=>{
+        orders.push({
+          item: o.item || "Unknown",
+          qty: o.qty || 1,
+          type: o.type || "Dining",
+          room: o.room || "Dining",
+          price: Number(o.price || 0), // may be 0
+          time: o.time || ""
+        });
+      });
+
+    }catch(e){}
+  }
+
+  return orders;
+}
+function getBookings(){
+  try{
+    let data = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    return data.map(b => {
+      let nights =
+        b.nights ||
+        Math.max(1,
+          (new Date(b.checkout) - new Date(b.checkin)) / (1000*60*60*24)
+        );
+
+      return {
+        ...b,
+        nights,
+        total: b.total || (Number(b.room) * nights)
+      };
+    });
+
+  }catch(e){
+    return [];
+  }
+}
+
+// SAVE (optional helper)
+function saveBookings(bookings) {
+  localStorage.setItem("bookings", JSON.stringify(bookings));
+}
+
+
+function getWalkins(){
+  return JSON.parse(localStorage.getItem("walkins") || "[]");
+}
+
+/* DASHBOARD */
+function loadDashboard(){
+
+  let orders = getOrders();
+  let bookings = getBookings();
+  let walkins = getWalkins();
+
+  let profit = 0;
+
+  orders.forEach(o=>{
+    profit += Number(o.price || 0);
+  });
+
+  bookings.forEach(b=>{
+    profit += Number(b.total || 0);
+  });
+
+  document.getElementById("profit").innerText = "₹ " + profit;
+  document.getElementById("orderCount").innerText = orders.length;
+  document.getElementById("bookingCount").innerText = bookings.length;
+  document.getElementById("walkCount").innerText = walkins.length;
+
+  drawChart(profit);
+}
+
+function loadBookings(){
+
+  let bookings = getBookings();
+  let html = "";
+
+  if(bookings.length === 0){
+    document.getElementById("bookingList").innerHTML = "<p>No Bookings Yet</p>";
+    return;
+  }
+
+  bookings.forEach((b, i)=>{
+
+    let total = b.total || (Number(b.room || 0) * Number(b.nights || 1));
+
+    html += `
+      <div class="card">
+        <b>Name:</b> ${b.name || "Unknown"}<br>
+        <b>Phone:</b> ${b.phone || "N/A"}<br>
+        <b>Room Price:</b> ₹${b.room || 0}<br>
+        <b>Check-in:</b> ${b.checkin || "N/A"}<br>
+        <b>Check-out:</b> ${b.checkout || "N/A"}<br>
+        <b>Guests:</b> ${b.guests || 1}<br>
+        <b>Total:</b> ₹${total}<br>
+        <b>Time:</b> ${b.time || ""}<br>
+
+        <button class="red" onclick="deleteBooking(${i})">Delete</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("bookingList").innerHTML = html;
+}
+function loadOrders(){
+
+  let raw = localStorage.getItem("orders");
+  let html = "";
+
+  if(!raw){
+    document.getElementById("orderList").innerHTML = "<p>No Orders Yet</p>";
+    return;
+  }
+
+  let orders = [];
+
+  // ✅ MENU STRING FORMAT
+  if(raw.includes("|")){
+
+    let list = raw.split("||");
+
+    list.forEach(o=>{
+      if(o.trim() !== ""){
+
+        let p = o.split("|");
+
+        let item = p[0] || "Unknown";
+        let qty = Number(p[1] || 1);
+        let type = p[2] || "Dining";
+        let room = p[3] || "Dining";
+        let total = Number(p[4]); // actual price
+
+        // 🔥 AUTO FIX PRICE IF 0 OR MISSING
+        if(!total || total === 0){
+
+          let priceList = {
+            "Pasta":500,
+            "Pizza":600,
+            "Burger":300,
+            "Paneer Tikka":450,
+            "Noodles":350,
+            "Fried Rice":320,
+            "Sandwich":250,
+            "Fries":200,
+            "Ice Cream":180,
+            "Coffee":150,
+            "Tea":100,
+            "Mocktail":220,
+            "Salad":280,
+            "Soup":260,
+            "Chicken Curry":550,
+            "Dal Makhani":400,
+            "Butter Naan":80
+          };
+
+          total = (priceList[item] || 200) * qty;
+        }
+
+        let time = p[5] || "";
+
+        orders.push({
+          item, qty, type, room, price: total, time
+        });
+      }
+    });
+
+  }else{
+
+    // ✅ INDEX JSON FORMAT
+    try{
+      let data = JSON.parse(raw);
+
+      data.forEach(o=>{
+
+        let qty = Number(o.qty || 1);
+
+        let priceList = {
+          "Pasta":500,
+          "Pizza":600,
+          "Burger":300,
+          "Paneer Tikka":450
+        };
+
+        let total = Number(o.price);
+
+        // 🔥 FIX IF PRICE 0
+        if(!total || total === 0){
+          total = (priceList[o.item] || 200) * qty;
+        }
+
+        orders.push({
+          item: o.item || "Unknown",
+          qty: qty,
+          type: o.type || "Dining",
+          room: o.room || "Dining",
+          price: total,
+          time: o.time || ""
+        });
+      });
+
+    }catch(e){}
+  }
+
+  // ✅ DISPLAY
+  if(orders.length === 0){
+    html = "<p>No Orders Yet</p>";
+  }
+
+  orders.forEach((o,i)=>{
+
+    html += `
+      <div class="card">
+        <b>Item:</b> ${o.item}<br>
+        <b>Qty:</b> ${o.qty}<br>
+        <b>Type:</b> ${o.type}<br>
+        <b>Room:</b> ${o.room}<br>
+        <b>Price:</b> ₹${o.price}<br>
+        <b>Time:</b> ${o.time}<br>
+
+        <button class="red" onclick="deleteOrder(${i})">Delete</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("orderList").innerHTML = html;
+}
+/* BOOKINGS */
+
+/* WALK-IN */
+function loadWalkins(){
+
+  let walkins = getWalkins();
+
+  let html = "";
+
+  walkins.forEach(w=>{
+
+    html += `
+      <div class="card">
+        <b>Name:</b> ${w.name}<br>
+        <b>Phone:</b> ${w.phone}<br>
+        <b>Room:</b> ${w.room}<br>
+        <b>Time:</b> ${w.time}
+      </div>
+    `;
+  });
+
+  document.getElementById("walkList").innerHTML = html;
+}
+
+/* ADD WALK-IN */
+function addWalkin(){
+
+  let name = prompt("Name:");
+  let phone = prompt("Phone:");
+  let room = prompt("Room:");
+
+  let walkins = getWalkins();
+
+  walkins.push({
+    name:name,
+    phone:phone,
+    room:room,
+    time:new Date().toLocaleString()
+  });
+
+  localStorage.setItem("walkins", JSON.stringify(walkins));
+
+  loadWalkins();
+  loadDashboard();
+}
+
+/* BILL */
+function bill(o){
+
+  alert(
+`🏨 BILL
+
+Item: ${o.item}
+Qty: ${o.qty}
+Room: ${o.room}
+Price: ₹${o.price||200}
+Time: ${o.time}
+
+Thank you!`
+  );
+
+}
+
+/* CHART */
+let chartInstance;
+
+function drawChart(profit){
+
+  let canvas = document.getElementById("chart");
+
+  if(!canvas) return;
+
+  let ctx = canvas.getContext("2d");
+
+  if(chartInstance){
+    chartInstance.destroy();
+  }
+
+  chartInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Today Profit"],
+      datasets: [{
+        label: "Revenue (₹)",
+        data: [profit],
+        backgroundColor: "gold"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: "white"
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: "white" }
+        },
+        y: {
+          ticks: { color: "white" }
+        }
+      }
+    }
+  });
+}
+function deleteBooking(index){
+  let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+  bookings.splice(index, 1);
+  localStorage.setItem("bookings", JSON.stringify(bookings));
+  loadBookings();
+  loadDashboard();
+}
+
+
+
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("auth");
+  window.location.href="login.html";
+}
+function deleteOrder(index){
+
+  let raw = localStorage.getItem("orders");
+
+  try{
+    let orders = JSON.parse(raw);
+
+    if(Array.isArray(orders)){
+      orders.splice(index,1);
+      localStorage.setItem("orders", JSON.stringify(orders));
+    }
+
+  }catch(e){
+
+    // STRING FORMAT HANDLE
+    let list = raw.split("||").filter(x=>x.trim()!="");
+    list.splice(index,1);
+
+    localStorage.setItem("orders", list.join("||")+"||");
+  }
+
+  loadOrders();
+  loadDashboard();
+}
+
+/* INIT */
+loadDashboard();
+loadOrders();
+loadBookings();
+loadWalkins();
+
+</script>
+
+</body>
+</html>

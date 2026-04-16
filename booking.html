@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Room</title>
+</head>
+
+<body>
+
+<h2>Book Your Room</h2>
+
+<input id="name" placeholder="Your Name"><br><br>
+<input id="date" type="date"><br><br>
+
+<select id="room">
+  <option>Deluxe Room</option>
+  <option>Premium Suite</option>
+  <option>Royal Villa</option>
+</select><br><br>
+
+<button onclick="book()">Book Now</button>
+
+<script>
+function book(){
+
+let data = JSON.parse(localStorage.getItem("bookings")) || [];
+
+data.push({
+name: document.getElementById("name").value,
+date: document.getElementById("date").value,
+room: document.getElementById("room").value
+});
+
+localStorage.setItem("bookings", JSON.stringify(data));
+
+alert("Booking Done!");
+}
+</script>
+
+</body>
+</html>

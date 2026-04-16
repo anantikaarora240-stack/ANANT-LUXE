@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Anant Luxe Resort</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#000;color:#fff}
+
+/* HERO */
+.hero{position:relative}
+.hero video{width:100%;height:100vh;object-fit:cover}
+.hero-text{position:absolute;top:40%;width:100%;text-align:center}
+.hero-text h1{font-size:60px}
+.hero-text button{padding:12px;margin:5px;background:gold;border:none}
+.grid img{
+  width: 100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:10px;
+}
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+}
+
+.gallery-grid img{
+width:100%;
+height:150px;
+aspect-ratio:1/1;
+object-fit:cover;
+border-radius:10px;
+}
+.gallery-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+}
+
+.gallery-grid img{
+width:100%;
+aspect-ratio:1/1;
+object-fit:cover;
+border-radius:10px;
+}
+
+/* SECTION */
+section{padding:60px}
+
+/* ABOUT */
+.about{display:flex;gap:20px}
+.about img{width:50%}
+.about p{width:50%;line-height:1.6}
+
+/* ROOMS */
+.room{display:flex;margin-bottom:40px}
+.room img{width:45%;height:300px}
+.room div{padding:20px}
+
+
+
+/* CONTACT BOX */
+.contact-box{display:flex;gap:20px}
+.contact-box div{flex:1;background:#111;padding:20px}
+
+/* POPUP */
+.popup{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.8);
+}
+.popup-content{
+background:#fff;
+color:#000;
+margin:5% auto;
+padding:20px;
+width:90%;              /* BIG CHANGE */
+text-align:center;
+overflow:auto;
+max-height:90vh;
+}
+.close{float:right;cursor:pointer}
+
+button{background:gold;border:none;padding:10px;margin-top:5px}
+/* OFFERS */
+.offers{
+background:#111;
+text-align:center;
+padding:40px;
+border-top:2px solid gold;
+border-bottom:2px solid gold;
+}
+
+.offers h2{
+color:gold;
+margin-bottom:20px;
+}
+
+.offer-box{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+.offer{
+background:#000;
+padding:15px;
+border:1px solid gold;
+border-radius:10px;
+animation:blink 1.5s infinite;
+}
+
+@keyframes blink{
+0%{opacity:1;}
+50%{opacity:0.4;}
+100%{opacity:1;}
+}
+.luxury-stats{
+text-align:center;
+font-size:20px;
+color:gold;
+margin:50px 0;
+font-weight:bold;
+letter-spacing:1px;
+white-space:nowrap;
+overflow-x:auto;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+<video autoplay muted loop playsinline controls>
+<source src="video/hotel.mp4" type="video/mp4">
+</video>
+
+<div class="hero-text">
+<h1>ANANT LUXE RESORT</h1>
+<button onclick="scrollToSection('about')">Explore More</button>
+<button onclick="openPopup('booking')">Book Now</button>
+</div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="about">
+<img src="https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg">
+<div>
+<h2>About Anant Luxe Resort</h2>
+<p>
+Anant Luxe Resort is a modern and luxurious hospitality concept designed to provide guests with a premium and comfortable experience that blends elegance with contemporary amenities. The resort represents the idea of high-end living, offering beautifully designed rooms, world-class facilities, and a peaceful environment away from the busy city life. Inspired by the standards of global hospitality, Anant Luxe Resort focuses on customer satisfaction through quality service, aesthetic architecture, and advanced booking systems. The resort includes various features such as luxury suites, a swimming pool, spa services, fitness center, fine dining options, and 24/7 customer support, ensuring that every guest enjoys a relaxing and memorable stay. In addition to physical comfort, the project also highlights digital convenience by integrating an online hotel management system where users can easily explore rooms, check availability, and make bookings, while the admin can efficiently manage customer data. The concept of Anant Luxe Resort was developed as part of a web development project to demonstrate how technology can enhance the hospitality industry by improving user experience, accessibility, and operational efficiency. Overall, it stands as a perfect combination of luxury, technology, and innovation, aiming to redefine the standard of modern resort experiences.
+</p>
+</div>
+</section>
+
+<!-- ROOMS -->
+<section id="rooms">
+<h2>Our Luxury Rooms</h2>
+
+<div class="room">
+<img src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg">
+<div>
+<h3>Deluxe Room</h3>
+<p>Elegant comfort with modern interiors.</p>
+<p>₹8000</p>
+<button onclick="openPopup('booking')">Book Room</button>
+</div>
+</div>
+
+<div class="room">
+<img src="https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg">
+<div>
+<h3>Executive Room</h3>
+<p>Spacious room with premium features.</p>
+<p>₹8500</p>
+<button onclick="openPopup('booking')">Book Room</button>
+</div>
+</div>
+
+<div class="room">
+<img src="https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg">
+<div>
+<h3>Luxury Suite</h3>
+<p>Luxury suite with modern facilities.</p>
+<p>₹18000</p>
+<button onclick="openPopup('booking')">Book Room</button>
+</div>
+</div>
+
+<div class="room">
+<img src="https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg">
+<div>
+<h3>Presidential Suite</h3>
+<p>Royal experience with top luxury.</p>
+<p>₹22000</p>
+<button onclick="openPopup('booking')">Book Room</button>
+</div>
+</div>
+
+</section>
+
+<!-- EXPERIENCE -->
+<section>
+<h2>Experience</h2>
+<div class="grid">
+<div><img src="https://images.pexels.com/photos/414029/pexels-photo-414029.jpeg"><p>Gym</p></div>
+<div><img src="https://images.pexels.com/photos/374148/pexels-photo-374148.jpeg"><p>Spa</p></div>
+<div><img src="https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg"><p>Pool</p></div>
+<div><img src="https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg"><p>Lounge</p></div>
+<div><img src="https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg"><p>Gaming</p></div>
+<div><img src="https://images.pexels.com/photos/261395/pexels-photo-261395.jpeg"><p>Rooftop Bar</p></div>
+</div>
+</section>
+
+<!-- GALLERY -->
+<section>
+<h2>Gallery</h2>
+<img src="https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg" width="100%">
+<button onclick="openPopup('gallery')">Explore More</button>
+</section>
+
+<div id="gallery" class="popup">
+<div class="popup-content">
+<span class="close" onclick="closePopup('gallery')">❌</span>
+
+<div class="gallery-grid">
+
+<img src="https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg">
+<img src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg">
+<img src="https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg">
+<img src="https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg">
+<img src="https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg">
+<img src="https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg">
+<img src="https://images.pexels.com/photos/261169/pexels-photo-261169.jpeg">
+<img src="https://images.pexels.com/photos/261395/pexels-photo-261395.jpeg">
+<img src="https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg">
+<img src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg">
+<img src="https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg">
+<img src="https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg">
+
+</div>
+</div>
+</div>
+
+<!-- DINING -->
+<section>
+<h2>Luxury Dining</h2>
+<img src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg" width="100%">
+<a href="menu.html"><button>Explore Menu</button></a>
+</section>
+
+<div id="menu" class="popup">
+<div class="popup-content">
+<span class="close" onclick="closePopup('menu')">❌</span>
+
+<p>Pasta ₹500 <button onclick="pay(event)">Order</button></p>
+<p>Pizza ₹600 <button onclick="pay(event)">Order</button></p>
+<p>Burger ₹79 <button onclick="pay(event)">Order</button></p>
+<p>Paneer Tikka ₹450 <button onclick="pay(event)">Order</button></p>
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Food">
+</div>
+</div>
+
+<!-- SERVICES -->
+<section>
+<h2>Services</h2>
+<div class="grid">
+<div><img src="https://images.pexels.com/photos/4239034/pexels-photo-4239034.jpeg"><p>Laundry</p></div>
+<div><img src="https://images.pexels.com/photos/3769138/pexels-photo-3769138.jpeg"><p>Housekeeping</p></div>
+<div><img src="https://images.pexels.com/photos/21014/pexels-photo.jpg"><p>Airport Transfer</p></div>
+<div><img src="https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg"><p>Tours</p></div>
+</div>
+</section>
+<!-- OFFERS -->
+<section class="offers">
+<h2>🔥 Special Offers</h2>
+
+<div class="offer-box">
+
+<div class="offer">💎 20% OFF on Deluxe Rooms</div>
+<div class="offer">🍽 Free Breakfast with Executive Room</div>
+<div class="offer">🏨 Stay 3 Nights, Pay for 2</div>
+<div class="offer">💆 Free Spa Session on Luxury Suite</div>
+<div class="offer">🍕 30% OFF on Dining Orders</div>
+<div class="offer">👨‍👩‍👧 Family Combo Offer Available</div>
+
+</div>
+</section>
+<!-- POLICIES -->
+<section>
+<h2>Hotel Policies</h2>
+<p>Check-in 12 PM | Check-out 11 AM</p>
+<p>Smoke free Property</p>
+<p>ID proof mandatory</p>
+<p>Pets allowed upto 20 kg weight</p>
+<p>Maintain silence</p>
+<p>Damage charges applicable</p>
+</section>
+
+<!-- STATS -->
+<div class="luxury-stats">
+✨ 5000+ Elite Guests &nbsp; | &nbsp; 🏆 50+ Prestigious Awards &nbsp; | &nbsp; 🏨 120+ Premium Suites &nbsp; | &nbsp; ⭐ 24/7 Royal Concierge
+</div>
+<!-- REVIEWS -->
+<section>
+<h2>Customer Reviews</h2>
+<p>⭐️⭐️⭐️⭐️⭐️ Aastha Chaudhary – Amazing stay!</p>
+<p>⭐️⭐️⭐️⭐️ Priya Mehta – Excellent service</p>
+<p>⭐️⭐️⭐️⭐️⭐️ Aman Verma – Beautiful rooms</p>
+</section>
+
+<!-- CONTACT -->
+<section>
+<h2>Contact</h2>
+<div class="contact-box">
+<div>Email<br>anantikaarora240@gmail.com</div>
+<div>Phone<br>9463279590</div>
+<div>Address<br>Balachaur, Highway 144521</div>
+</div>
+
+<iframe src="https://maps.google.com/maps?q=Balachaur&t=&z=13&output=embed" width="100%" height="300"></iframe>
+</section>
+
+<!-- BOOKING -->
+<div id="booking" class="popup">
+<div class="popup-content">
+<span class="close" onclick="closePopup('booking')">❌</span>
+
+<h3>Booking</h3>
+
+<input id="name" placeholder="Name"><br><br>
+<input id="checkin" type="date"><br><br>
+<input id="checkout" type="date"><br><br>
+<input id="guests" placeholder="Guests"><br><br>
+<input id="phone" placeholder="Phone Number"><br><br>
+
+<select id="roomType">
+<option value="8000">Deluxe Room ₹8000</option>
+<option value="8500">Executive Room ₹8500</option>
+<option value="18000">Luxury Suite ₹18000</option>
+<option value="22000">Presidential Suite ₹22000</option>
+</select>
+
+<br><br>
+
+<button type="button" onclick="confirmBooking()">Confirm & Pay</button>
+
+</div>
+</div>
+
+<script>
+
+function openPopup(id){
+document.getElementById(id).style.display="block"
+}
+
+function closePopup(id){
+document.getElementById(id).style.display="none"
+}
+
+function scrollToSection(id){
+document.getElementById(id).scrollIntoView({behavior:'smooth'})
+}
+
+/* ===========================
+   FIXED PAYMENT SYSTEM
+=========================== */
+
+function openPayment(amount){
+document.getElementById("paymentModal").style.display="flex";
+document.getElementById("billText").innerText =
+"Total Amount to Pay: ₹" + amount;
+
+document.getElementById("qrImg").src =
+"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pay%20₹" + amount;
+}
+
+function closePayment(){
+document.getElementById("paymentModal").style.display="none";
+}
+
+/* ===========================
+   BOOKING SYSTEM (FIXED)
+=========================== */
+function confirmBooking(){
+
+let name = document.getElementById("name").value;
+let checkin = document.getElementById("checkin").value;
+let checkout = document.getElementById("checkout").value;
+let guests = document.getElementById("guests").value;
+let phone = document.getElementById("phone").value;
+let room = Number(document.getElementById("roomType").value);
+
+if(!name || !checkin || !checkout || !guests || !phone){
+alert("Please fill all details");
+return;
+}
+
+let nights = Math.max(1,
+Math.floor((new Date(checkout)-new Date(checkin))/(1000*60*60*24))
+);
+
+let total = nights * room;
+
+/* SAVE BOOKING */
+let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+openQR();
+let bookingData = {
+name, phone, checkin, checkout, guests,
+room, nights, total,
+time: new Date().toLocaleString()
+};
+
+bookings.push(bookingData);
+localStorage.setItem("bookings", JSON.stringify(bookings));
+
+/* SAVE LAST BOOKING */
+localStorage.setItem("lastBooking", JSON.stringify(bookingData));
+
+closePopup("booking");
+
+/* 🔥 FORCE QR OPEN (IMPORTANT FIX) */
+setTimeout(() => {
+document.getElementById("paymentModal").style.display = "flex";
+
+document.getElementById("billText").innerText =
+"Total Amount to Pay: ₹" + total;
+
+document.getElementById("qrImg").src =
+"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pay%20₹" + total;
+}, 100);
+}
+
+/* ===========================
+   PAY NOW (RECEIPT)
+=========================== */
+
+function payNow(){
+
+let data = JSON.parse(localStorage.getItem("lastBooking"));
+
+if(!data){
+alert("No booking found!");
+return;
+}
+
+let receipt =
+"🏨 ANANT LUXE RESORT\n\n" +
+"Name: " + data.name + "\n" +
+"Phone: " + data.phone + "\n" +
+"Check-in: " + data.checkin + "\n" +
+"Check-out: " + data.checkout + "\n" +
+"Nights: " + data.nights + "\n" +
+"Guests: " + data.guests + "\n" +
+"Room Price: ₹" + data.room + "\n" +
+"Total Amount: ₹" + data.total + "\n\n" +
+"Status: PAID ✅";
+
+alert(receipt);
+closePayment();
+}
+
+/* ===========================
+   DINING ORDER SYSTEM
+=========================== */
+
+function pay(event){
+
+let item = event.target.parentElement.innerText;
+
+/* ORIGINAL CODE KEPT SAFE (NOT DELETED) */
+/*
+localStorage.setItem("orders", JSON.stringify(orders));
+}
+}
+*/
+
+/* FIXED VERSION BELOW */
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+orders.push({
+item,
+time: new Date().toLocaleString()
+});
+
+localStorage.setItem("orders", JSON.stringify(orders));
+
+alert("Order saved!");
+}
+
+
+function openPopup(id){
+  document.getElementById(id).style.display="block";
+}
+
+function closePopup(id){
+  document.getElementById(id).style.display="none";
+}
+
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+function confirmBooking(){
+
+  let name = document.getElementById("name").value;
+  let checkin = document.getElementById("checkin").value;
+  let checkout = document.getElementById("checkout").value;
+  let guests = document.getElementById("guests").value;
+  let phone = document.getElementById("phone").value;
+  let room = Number(document.getElementById("roomType").value);
+
+  if(!name || !checkin || !checkout || !guests || !phone){
+    alert("Please fill all details");
+    return;
+  }
+
+  let nights = Math.max(1,
+    Math.floor((new Date(checkout)-new Date(checkin))/(1000*60*60*24))
+  );
+
+  let total = nights * room;
+
+  let bookingData = {
+    name, phone, checkin, checkout, guests,
+    room, nights, total,
+    time: new Date().toLocaleString()
+  };
+
+  localStorage.setItem("lastBooking", JSON.stringify(bookingData));
+
+  closePopup("booking");
+
+  document.getElementById("paymentModal").style.display="flex";
+  document.getElementById("billText").innerText="Total Amount: ₹"+total;
+
+  document.getElementById("qrImg").src =
+    "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pay%20"+total;
+}
+
+function closePayment(){
+  document.getElementById("paymentModal").style.display="none";
+}
+
+function payNow(){
+  let data = JSON.parse(localStorage.getItem("lastBooking"));
+
+  alert(
+    "PAYMENT RECEIPT\n\n" +
+    "Name: " + data.name + "\n" +
+    "Total: ₹" + data.total + "\n\n" +
+    "STATUS: PAID"
+  );
+
+  closePayment();
+}
+</script>
+</script>
+
+<!-- PAYMENT POPUP --><div id="paymentModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;">
+  <div style="background:#fff;color:#000;padding:20px;border-radius:10px;text-align:center;width:300px;">
+    <h2>Complete Payment</h2>
+
+    <p id="billText"></p>
+
+    <img id="qrImg" style="width:200px;height:200px;">
+
+    <br><br>
+    <button onclick="payNow()">Pay Now</button>
+    <button onclick="closePayment()">Close</button>
+  </div>
+<h2>Complete Payment</h2>
+<p id="billText" style="font-size:18px;color:lightgreen;"></p>
+
+<img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Payment" style="width:200px;height:200px;">
+
+<p>Scan QR to Pay</p>
+
+<button onclick="payNow()" style="background:green;color:white;">Pay Now</button>
+<button onclick="closePayment()" style="background:red;color:white;">Close</button>
+
+
+</div>
+</div>
+
+</body>
+</html>

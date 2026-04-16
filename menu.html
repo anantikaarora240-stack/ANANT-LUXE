@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Menu - Anant Luxe Resort</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0b0b0b;
+color:#fff;
+text-align:center;
+}
+
+/* HEADER */
+h1{
+color:gold;
+margin:15px;
+}
+
+/* CLOSE BUTTON */
+.close{
+position:fixed;
+top:10px;
+right:15px;
+font-size:30px;
+cursor:pointer;
+color:white;
+z-index:999;
+}
+
+/* GRID */
+.menu-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+padding:15px;
+}
+
+/* CARD */
+.card{
+background:#111;
+padding:10px;
+border-radius:12px;
+}
+
+/* IMAGE FIX (SQUARE) */
+.card img{
+width:100%;
+aspect-ratio:1/1;
+object-fit:cover;
+border-radius:10px;
+}
+
+/* BUTTON */
+button{
+background:gold;
+border:none;
+padding:8px;
+margin-top:5px;
+cursor:pointer;
+border-radius:6px;
+}
+
+/* POPUP */
+.popup{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.85);
+justify-content:center;
+align-items:center;
+}
+
+/* BOX */
+.box{
+background:#fff;
+color:#000;
+padding:15px;
+width:300px;
+border-radius:10px;
+text-align:left;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin:5px 0;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🍽 Luxury Menu</h1>
+
+<div class="close" onclick="goBack()">❌</div>
+
+<div class="menu-grid" id="menu"></div>
+
+<!-- ORDER POPUP -->
+<div id="orderPopup" class="popup">
+<div class="box">
+
+<h3>Place Order</h3>
+
+<input id="item" readonly>
+<input id="price" readonly>
+
+<input id="qty" placeholder="Quantity">
+
+<select id="type" onchange="checkType()">
+<option value="Dining">Dining</option>
+<option value="Room">Room</option>
+</select>
+
+<input id="room" placeholder="Room Number" style="display:none;">
+
+<button onclick="payNow()">Pay Now</button>
+<button onclick="closeOrder()">Close</button>
+
+</div>
+</div>
+
+<!-- BILL POPUP -->
+<div id="billPopup" class="popup">
+<div class="box">
+
+<h3>Bill</h3>
+<p id="billText"></p>
+
+<img id="qr" width="200">
+
+<button onclick="done()">Paid</button>
+
+</div>
+</div>
+
+<script>
+
+/* CLOSE PAGE */
+function goBack(){
+window.location.href="index.html";
+}
+
+/* MENU ITEMS */
+let items=[
+["Pasta",500,"https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg"],
+["Pizza",600,"https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg"],
+["Burger",300,"https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg"],
+["Paneer Tikka",450,"https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg"],
+["Noodles",350,"https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg"],
+["Fried Rice",320,"https://images.pexels.com/photos/3026808/pexels-photo-3026808.jpeg"],
+["Sandwich",250,"https://images.pexels.com/photos/1600711/pexels-photo-1600711.jpeg"],
+["Fries",200,"https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg"],
+["Ice Cream",180,"https://images.pexels.com/photos/1352278/pexels-photo-1352278.jpeg"],
+["Coffee",150,"https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg"],
+["Tea",100,"https://images.pexels.com/photos/1793035/pexels-photo-1793035.jpeg"],
+["Mocktail",220,"https://images.pexels.com/photos/616836/pexels-photo-616836.jpeg"],
+["Salad",280,"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"],
+["Soup",260,"https://images.pexels.com/photos/539451/pexels-photo-539451.jpeg"],
+["Chicken Curry",550,"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg"],
+["Dal Makhani",400,"https://images.pexels.com/photos/12737656/pexels-photo-12737656.jpeg"],
+["Butter Naan",80,"https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg"]
+];
+
+/* LOAD MENU FAST */
+let html="";
+items.forEach((i,idx)=>{
+html+=`
+<div class="card">
+<img src="${i[2]}" loading="lazy">
+<h3>${i[0]}</h3>
+<p>₹${i[1]}</p>
+<button onclick="openOrder(${idx})">Order Now</button>
+</div>`;
+});
+document.getElementById("menu").innerHTML=html;
+
+/* OPEN ORDER */
+let price=0;
+
+function openOrder(i){
+document.getElementById("orderPopup").style.display="flex";
+document.getElementById("item").value=items[i][0];
+document.getElementById("price").value=items[i][1];
+price=items[i][1];
+}
+
+/* CHECK ROOM */
+function checkType(){
+let t=document.getElementById("type").value;
+document.getElementById("room").style.display=
+(t=="Room")?"block":"none";
+}
+
+/* CLOSE */
+function closeOrder(){
+document.getElementById("orderPopup").style.display="none";
+}
+
+/* PAY */
+function payNow(){
+
+let item=document.getElementById("item").value;
+let qty=document.getElementById("qty").value;
+let type=document.getElementById("type").value;
+let room=document.getElementById("room").value;
+
+if(!qty){
+alert("Enter quantity");
+return;
+}
+
+if(type=="Room" && !room){
+alert("Enter room number");
+return;
+}
+
+let total=qty*price;
+
+/* SAVE FOR ADMIN (IMPORTANT FORMAT) */
+let old=localStorage.getItem("orders")||"";
+
+let newOrder=
+item+"|"+qty+"|"+type+"|"+room+"|"+total+"|"+new Date().toLocaleString()+"||";
+
+localStorage.setItem("orders",old+newOrder);
+
+/* BILL */
+document.getElementById("billText").innerText=
+"Item: "+item+
+"\nQty: "+qty+
+"\nType: "+type+
+"\nRoom: "+room+
+"\nTotal: ₹"+total;
+
+/* QR */
+document.getElementById("qr").src=
+"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pay%20₹"+total;
+
+document.getElementById("orderPopup").style.display="none";
+document.getElementById("billPopup").style.display="flex";
+}
+/* DONE */
+function done(){
+alert("Payment Successful ✅");
+document.getElementById("billPopup").style.display="none";
+}
+
+</script>
+
+</body>
+</html>
